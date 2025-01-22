@@ -1,0 +1,28 @@
+# Local Terraform directories
+.terraform/
+
+# Ignore provider binaries (for example AWS provider)
+.terraform/providers/
+
+# Local state files
+*.tfstate
+*.tfstate.*
+
+
+secrets.tfvars
+
+# Crash log files
+crash.log
+
+# Exclude override files (if used)
+override.tf
+override.tf.json
+*_override.tf
+*_override.tf.json
+
+# Exclude .terraform.lock.hcl file, if desired
+.terraform.lock.hcl
+
+# Sensitive variable files (e.g., for AWS secrets)
+terraform.tfvars
+terraform.tfvars.json
