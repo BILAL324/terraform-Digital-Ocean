@@ -59,12 +59,12 @@ jobs:
       # Step 3: Create `secrets.tfvars` file dynamically
       - name: Create secrets.tfvars
         run: |
-          echo 'do_token = "${{ secrets.DO_PAT }}"' > secrets.tfvars
+          echo 'do_token = "${{ secrets.DO_TOKEN }}"' > secrets.tfvars
           echo 'ssh_key = "${{ secrets.SSH_PRIVATE_KEY }}"' >> secrets.tfvars
 
       # Step 4: Initialize Terraform
       - name: Terraform Init
-        run: terraform init -var-file="secrets.tfvars"
+        run: terraform init 
 
       # Step 5: Apply Terraform to Provision the Droplet
       - name: Terraform Apply
