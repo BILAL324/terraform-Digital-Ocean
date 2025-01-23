@@ -28,6 +28,12 @@
   
 
 
+# - name: Get Droplet IP
+#   run: |
+#     IP=$(terraform output -raw droplet-ip-public)
+#     echo "DROPLET_IP=$IP" >> "$GITHUB_ENV"
+
+
 
 
 
@@ -71,6 +77,9 @@ jobs:
         id: apply
         run: terraform apply -var-file="secrets.tfvars" -auto-approve
 
+
+
+        
       # Step 6: Output the Droplet IP
       - name: Get Droplet IP
         env:
@@ -103,7 +112,7 @@ jobs:
           script: |
             # Clone the repository if it doesn't exist
             if [ ! -d "localspot-infra" ]; then
-              git clone ${{ secrets.GITHUB_REPO_URL }} app
+              git clone ${{ secrets.GI_REPO_URL }}
             fi
             cd localspot-infra
 
