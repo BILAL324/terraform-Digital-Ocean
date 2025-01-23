@@ -73,10 +73,10 @@ jobs:
 
       # Step 6: Output the Droplet IP
       - name: Get Droplet IP
+        env:
+          TF_OUTPUT: ${{ steps.apply.outputs.droplet-ip-public }}
         run: |
-          terraform output -json
-          IP=$(terraform output -raw droplet-ip-public)
-          echo "DROPLET_IP=$IP" >> "$GITHUB_ENV"
+          echo "DROPLET_IP=$TF_OUTPUT" >> "$GITHUB_ENV"
 
       # Optional Step: Remove the secrets.tfvars file
       - name: Cleanup secrets.tfvars
