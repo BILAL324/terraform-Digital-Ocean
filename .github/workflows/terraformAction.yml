@@ -80,7 +80,7 @@ jobs:
           echo "Error: Unable to retrieve Droplet IP."
           exit 1
          fi
-          echo "DROPLET_IP=${DROPLET_IP}" >> $GITHUB_ENV
+         echo "DROPLET_IP=${DROPLET_IP}" >> $GITHUB_ENV
     
 
       # Optional Step: Remove the secrets.tfvars file
