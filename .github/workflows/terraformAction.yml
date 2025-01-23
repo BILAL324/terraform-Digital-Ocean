@@ -56,20 +56,31 @@ jobs:
           terraform_version: 1.5.5
           cli_config_credentials_token: ${{ secrets.DO_PAT }}
 
-      
+      # Step 3: Create `secrets.tfvars` file dynamically
+      - name: Create secrets.tfvars
+        run: |
+          echo 'do_token = "${{ secrets.DO_PAT }}"' > secrets.tfvars
+          echo 'ssh_key = "${{ secrets.SSH_PRIVATE_KEY }}"' >> secrets.tfvars
+
       # Step 4: Initialize Terraform
       - name: Terraform Init
-        run: terraform init 
+        run: terraform init -backend-config="secrets.tfvars"
 
       # Step 5: Apply Terraform to Provision the Droplet
       - name: Terraform Apply
         id: apply
-        run: terraform apply -auto-approve
+        run: terraform apply -var-file="secrets.tfvars" -auto-approve
 
       # Step 6: Output the Droplet IP
       - name: Get Droplet IP
         id: droplet_ip
         run: echo "DROPLET_IP=$(terraform output -raw droplet_ip)" >> $GITHUB_ENV
+
+      # Optional Step: Remove the secrets.tfvars file
+      - name: Cleanup secrets.tfvars
+        if: always()
+        run: rm -f secrets.tfvars
+
 
     
 
