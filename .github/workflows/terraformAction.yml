@@ -59,7 +59,7 @@ jobs:
       # Step 3: Create `secrets.tfvars` file dynamically
       - name: Create secrets.tfvars
         run: |
-          echo 'do_token = "${{ secrets.DO_TOKEN }}"' > secrets.tfvars
+          echo 'do_token = "${{ secrets.DO_ }}"' > secrets.tfvars
           echo 'ssh_key = "${{ secrets.SSH_PRIVATE_KEY }}"' >> secrets.tfvars
 
       # Step 4: Initialize Terraform
@@ -74,14 +74,7 @@ jobs:
       # Step 6: Output the Droplet IP
       - name: Get Droplet IP
         id: droplet_ip
-        run: |
-         DROPLET_IP=$(terraform output -raw droplet_ip || echo "0.0.0.0")
-         if [ "$DROPLET_IP" == "0.0.0.0" ]; then
-          echo "Error: Unable to retrieve Droplet IP."
-          exit 1
-         fi
-         echo "DROPLET_IP=${DROPLET_IP}" >> $GITHUB_ENV
-    
+        run: echo "DROPLET_IP=$(terraform output -raw droplet-ip-public)" >> $GITHUB_ENV
 
       # Optional Step: Remove the secrets.tfvars file
       - name: Cleanup secrets.tfvars
