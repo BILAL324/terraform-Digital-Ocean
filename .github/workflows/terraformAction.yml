@@ -64,7 +64,7 @@ jobs:
 
       # Step 4: Initialize Terraform
       - name: Terraform Init
-        run: terraform init -backend-config="secrets.tfvars"
+        run: terraform init -var-file="secrets.tfvars"
 
       # Step 5: Apply Terraform to Provision the Droplet
       - name: Terraform Apply
