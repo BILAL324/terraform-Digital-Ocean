@@ -1,0 +1,101 @@
+# yaml-language-server: $schema=https://json.schemastore.org/github-workflow.json
+
+
+
+# name : Terraform CI / CD
+
+# on:
+#   push:
+#     branches:
+#       - main
+#   pull_request:
+#     branches:
+#       - main
+
+# job:
+#   terraform:
+#     name : terraform work flow
+#     runs-on: ubuntu-latest
+
+#     steps:
+#       - name : terraform setup
+#       uses : hashicorp/setup-terraform@v2
+#       with:
+#         terraform_version: 1.5.5
+#         cli_config_credentials_token: ${{secrets.DO_pat}}
+
+#     - name
+  
+
+
+
+
+
+
+name: Terraform Deploy and CI/CD
+
+on:
+  push:
+    branches:
+      - main  # Trigger on push to the main branch
+
+jobs:
+  terraform:
+    name: Provision Infrastructure with Terraform
+    runs-on: ubuntu-latest
+
+    steps:
+      # Step 1: Checkout the repository
+      - name: Checkout Code
+        uses: actions/checkout@v3
+
+      # Step 2: Set up Terraform
+      - name: Setup Terraform
+        uses: hashicorp/setup-terraform@v2
+        with:
+          terraform_version: 1.5.5
+          cli_config_credentials_token: ${{ secrets.DO_PAT }}
+
+      
+      # Step 4: Initialize Terraform
+      - name: Terraform Init
+        run: terraform init 
+
+      # Step 5: Apply Terraform to Provision the Droplet
+      - name: Terraform Apply
+        id: apply
+        run: terraform apply -auto-approve
+
+      # Step 6: Output the Droplet IP
+      - name: Get Droplet IP
+        id: droplet_ip
+        run: echo "DROPLET_IP=$(terraform output -raw droplet_ip)" >> $GITHUB_ENV
+
+    
+
+  deploy:
+    name: Deploy Application to Droplet
+    needs: terraform
+    runs-on: ubuntu-latest
+
+    steps:
+      # Step 1: SSH into Droplet and Deploy Application
+      - name: SSH and Deploy
+        uses: appleboy/ssh-action@v0.1.6
+        with:
+          host: ${{ env.DROPLET_IP }}
+          username: ${{ secrets.SSH_USERNAME }}
+          key: ${{ secrets.SSH_PRIVATE_KEY }}
+          passphrase: ""  # If the SSH private key does not have a passphrase
+          script: |
+            # Clone the repository if it doesn't exist
+            if [ ! -d "localspot-infra" ]; then
+              git clone ${{ secrets.GITHUB_REPO_URL }} app
+            fi
+            cd localspot-infra
+
+            # Pull the latest changes
+            git pull
+
+            # Run the deployment command
+            make deploy
