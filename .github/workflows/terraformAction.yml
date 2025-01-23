@@ -73,8 +73,9 @@ jobs:
 
       # Step 6: Output the Droplet IP
       - name: Get Droplet IP
-        id: droplet_ip
-        run: echo "DROPLET_IP=$(terraform output -raw droplet-ip-public)" >> "$GITHUB_ENV"
+        run: |
+          IP=$(terraform output -raw droplet-ip-public)
+          echo "DROPLET_IP=$IP" >> $GITHUB_ENV
 
       # Optional Step: Remove the secrets.tfvars file
       - name: Cleanup secrets.tfvars
